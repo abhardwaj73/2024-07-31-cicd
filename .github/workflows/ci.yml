@@ -3,25 +3,33 @@ name: Our CI
 on:
   pull_request:
   push:
-  workflow_dispatch:
+    branchs:
+      - main
+  workflow_dispatch: # At actions, you can allow the manual run of your workflow
 
 jobs:
   test:
     name: Run tests
-    strategy: 
+    strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.8", "3.12"]
+        python-version: ["3.8", "3.12"] # Will test it on ubuntu and windows for all 3.8 and 3.12
         include:
           - os: macos-14
             python-version: "3.9"
+    #runs-on: ubuntu-latest # machine that runs on
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Python
-        uses: actions/setup-python@v5
+      #- run: echo Hello World # specific the command that you want to run
+      - uses: actions/checkout@v4 # actions are github repos https://github.com/actions/checkout (if pull or pushed will be checkout)
+      #- name: Install Python
+      - uses: actions/setup-python@v5 # install a specific python version
         with:
-            python-version: ${{ matrix.python-version }}
+          #python-version: "3.11" # need quotation so 3.10 will not be read as 3.1 and will be read by its entirety
+          python-version: ${{ matrix.python-version }}
+      - if: runner.os == 'Linux' # needs to be in single quote, if statement do not need curly bracket
+        run: echo This is Linux
+      #- run: echo This is ${{ runner.os }}
       - run: python -m pip install .[test]
       - name: Run tests
-        run: pytest -m pytest
+        run: python -m pytest
