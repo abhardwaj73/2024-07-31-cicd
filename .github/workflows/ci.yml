@@ -20,8 +20,9 @@ jobs:
     #runs-on: ubuntu-latest # machine that runs on
     runs-on: ${{ matrix.os }}
     steps:
-      - run: echo "myvar=42" >> $GITHUB_ENV
-      - run: echo $myvar 
+      - id: step1
+        run: echo "myvar=42" >> $GITHUB_OUTPUT
+      - run: echo "myvar = ${{ steps.step1.outputs.myvar }}"
       #- run: echo Hello World # specific the command that you want to run
       - uses: actions/checkout@v4 # actions are github repos https://github.com/actions/checkout (if pull or pushed will be checkout)
       #- name: Install Python
